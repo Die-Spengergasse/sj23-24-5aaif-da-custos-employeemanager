@@ -1,0 +1,7 @@
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/node_modules
+.DS_Store
+EmployeeManager/EmployeeManager.Webapi/Employees.db*
