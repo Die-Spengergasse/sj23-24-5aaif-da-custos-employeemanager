@@ -11,6 +11,8 @@ namespace EmployeeManager.Webapi.Controllers
 {
     public record EditEmployeeCmd(
         Guid Guid,
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Username")]
+        string Username,
         [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Vorname")]
         string Firstname,
         [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Nachname")]
@@ -40,7 +42,9 @@ namespace EmployeeManager.Webapi.Controllers
             var employees = await _db.Employees
                 .OrderBy(e => e.Lastname)
                 .ThenBy(e => e.Firstname)
-                .Select(e => new EditEmployeeCmd(e.Guid, e.Firstname, e.Lastname, e.Birth))
+                .Select(e => new EditEmployeeCmd(
+                    e.Guid, e.Username,
+                    e.Firstname, e.Lastname, e.Birth))
                 .ToListAsync();
             return Ok(employees);
         }
@@ -50,6 +54,7 @@ namespace EmployeeManager.Webapi.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var employee = await _db.Employees.FirstOrDefaultAsync(e => e.Guid == editEmployeeCmd.Guid);
             if (employee is null) return NotFound();
+            employee.Username = editEmployeeCmd.Username;
             employee.Firstname = editEmployeeCmd.Firstname;
             employee.Lastname = editEmployeeCmd.Lastname;
             try

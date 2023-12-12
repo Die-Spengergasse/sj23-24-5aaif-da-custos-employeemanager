@@ -61,8 +61,10 @@ namespace EmployeeManager.Application.Infrastructure
 
             var employees = new Faker<Employee>("de").CustomInstantiator(f =>
             {
+                var lastname = f.Name.LastName();
                 return new Employee(
-                    firstname: f.Name.FirstName(), lastname: f.Name.LastName(),
+                    username: lastname.ToLower(),
+                    firstname: f.Name.FirstName(), lastname: lastname,
                     birth: f.Date.Between(new DateTime(1990, 1, 1), new DateTime(2005, 1, 1)).Date)
                 { Guid = f.Random.Guid() };
             })

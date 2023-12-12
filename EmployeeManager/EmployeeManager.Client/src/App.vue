@@ -36,14 +36,16 @@ const user = useUserStore();
           </RouterLink>
         </template>
 
-        <template  #center>
+        <template #center>
           <div>
             <h3 class="navbarHeader">Custos Mitarbeiterverwaltung</h3>
             <h6 class="navbarHeader">Idriss &bull; Rahmani &bull; Zivkovic</h6>
           </div>
         </template>
         <template #end>
-          <h5 class="navbarHeader">Angemeldet als {{ user.userdata.username }}</h5>
+          <h5 class="navbarHeader">Angemeldet als {{ user.userdata.username }}
+            <small>({{ user.userdata.guid }})</small>
+          </h5>
         </template>
       </Toolbar>
     </nav>
@@ -62,6 +64,6 @@ button {
   display: block;
   margin: 0;
   padding: 0;
-  color:white;
+  color: white;
 }
 </style>

@@ -4,6 +4,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             width: 100%;
             height: 100%;
@@ -25,8 +27,9 @@
         }
 
         h1 {
-            margin-top:0;
+            margin-top: 0;
         }
+
         .formcontainer {
             height: 100%;
             padding: 0;
@@ -39,9 +42,10 @@
 
         .formcontent {
             border: 3px solid gray;
-            padding:1em;
+            padding: 1em;
             border-radius: 5px;
         }
+
         .formrow {
             display: flex;
         }
@@ -49,11 +53,13 @@
         .formlabel {
             width: 5em;
         }
+
         ul {
-            margin:0;
+            margin: 0;
         }
     </style>
 </head>
+
 <body>
     <div class="formcontainer">
         <div class="formcontent">
@@ -71,6 +77,9 @@
                         <div class="formcontrol"><input type="password" asp-for="Password" /></div>
                     </div>
                     <div class="formrow">
+                        <p>Users: @string.Join(", ", Model.Users)</p>
+                    </div>
+                    <div class="formrow">
                         <div asp-validation-summary=All></div>
                     </div>
                     <div class="formrow">
@@ -81,6 +90,5 @@
         </div>
     </div>
 </body>
+
 </html>
-
-

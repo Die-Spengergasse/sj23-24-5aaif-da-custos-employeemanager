@@ -10,7 +10,8 @@ import InputText from 'primevue/inputtext';
     <div class="manageEmployeesView">
         <h1>Mitarbeiter verwalten</h1>
         <DataTable :value="employees" editMode="cell" @cell-edit-complete="onCellEditComplete">
-            <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" :hidden="col.hidden" sortable>
+            <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" :hidden="col.hidden"
+                sortable>
                 <template #body="{ data, field }">
                     <template v-if="field == 'birth'">
                         {{ new Date(data[field]).toLocaleDateString() }}
@@ -38,6 +39,7 @@ export default {
             validation: {},
             columns: [
                 { field: 'guid', header: 'Guid', hidden: true },
+                { field: 'username', header: 'Username' },
                 { field: 'firstname', header: 'Vorname' },
                 { field: 'lastname', header: 'Nachname' },
                 { field: 'birth', header: 'Gebutsdatum' },

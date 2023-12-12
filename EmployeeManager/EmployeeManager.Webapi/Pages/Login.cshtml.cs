@@ -7,17 +7,31 @@ using System.Security.Claims;
 using System;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using EmployeeManager.Application.Infrastructure;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManager.Webapi.Pages
 {
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
+        private readonly EmployeemanagerContext _db;
+
+        public LoginModel(EmployeemanagerContext db)
+        {
+            _db = db;
+        }
+
+        public List<string> Users => _db.Employees
+            .Select(e => e.Username)
+            .OrderBy(u => u)
+            .ToList();
         [BindProperty]
-        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Username")]
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungï¿½ltiger Username")]
         public string Username { get; set; } = default!;
         [BindProperty]
-        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiges Passwort")]
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungï¿½ltiges Passwort")]
         public string Password { get; set; } = default!;
         [FromQuery]
         public string? ReturnUrl { get; set; }
@@ -28,11 +42,18 @@ namespace EmployeeManager.Webapi.Pages
         public async Task<IActionResult> OnPost()
         {
             if (!ModelState.IsValid) return Page();
+            var user = await _db.Employees.FirstOrDefaultAsync(e => e.Username == Username);
+            if (user is null)
+            {
+                ModelState.AddModelError("", "Invalid username.");
+                return Page();
+            }
             var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, Username),
-                        new Claim(ClaimTypes.Role, "admin")
-                    };
+            {
+                new Claim("Guid", user.Guid.ToString()),
+                new Claim(ClaimTypes.Name, Username),
+                new Claim(ClaimTypes.Role, "admin")
+            };
             var claimsIdentity = new ClaimsIdentity(
                 claims,
                 Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
