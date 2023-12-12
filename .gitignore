@@ -5,3 +5,4 @@
 **/node_modules
 .DS_Store
 EmployeeManager/EmployeeManager.Webapi/Employees.db*
+EmployeeManager/EmployeeManager.Webapi/wwwroot
