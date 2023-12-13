@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using EmployeeManager.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // *************************************************************************************************
@@ -53,6 +54,9 @@ builder.Services.AddCors(options =>
         builder => builder.SetIsOriginAllowed(origin => new System.Uri(origin).IsLoopback)
             .AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
+
+builder.Services.AddTransient(opt => new CalendarService(2000, 2100));
+
 // *************************************************************************************************
 // APP
 // *************************************************************************************************

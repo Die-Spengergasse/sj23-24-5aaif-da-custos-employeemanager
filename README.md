@@ -1,8 +1,10 @@
 # Diplomarbeit Custos Mitarbeiterverwaltungssystem (2023/24)
 
-> git clone https://github.com/Die-Spengergasse/sj23-24-5aaif-da-custos-employeemanager
+```
+git clone https://github.com/Die-Spengergasse/sj23-24-5aaif-da-custos-employeemanager
+```
 
-![](screenshow_1945.png)
+![](screenshot_1924.png)
 
 ## Themenstellungen
 
