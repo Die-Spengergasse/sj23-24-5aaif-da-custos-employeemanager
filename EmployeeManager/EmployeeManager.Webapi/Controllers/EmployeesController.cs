@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManager.Webapi.Controllers
 {
+    public record AllEmployeeDto(Guid Guid, string Username, string Firstname, string Lastname, DateTime Birth, string Longname);
     public record EditEmployeeCmd(
         Guid Guid,
         [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Username")]
@@ -60,9 +61,9 @@ namespace EmployeeManager.Webapi.Controllers
             var employees = await _db.Employees
                 .OrderBy(e => e.Lastname)
                 .ThenBy(e => e.Firstname)
-                .Select(e => new EditEmployeeCmd(
+                .Select(e => new AllEmployeeDto(
                     e.Guid, e.Username,
-                    e.Firstname, e.Lastname, e.Birth))
+                    e.Firstname, e.Lastname, e.Birth, $"{e.Lastname} {e.Firstname}"))
                 .ToListAsync();
             return Ok(employees);
         }

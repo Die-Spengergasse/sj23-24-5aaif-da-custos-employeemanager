@@ -8,7 +8,7 @@
         </div>
         <div class="field">
           <label for="employee">Mitarbeiter</label>
-          <Dropdown id="employee" :options="employees" optionLabel="name" v-model="job.employeeId" required />
+          <Dropdown id="employee" :options="employees" optionLabel="longname" v-model="job.employeeId" required />
         </div>
         <div class="field">
           <label for="datetime">Datum und Uhrzeit</label>
@@ -48,7 +48,7 @@
   
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get('/customers');
+      const response = await axios.get('customers');
       customers.value = response.data;
     } catch (error) {
       console.error('Fehler beim Laden der Kunden:', error);
@@ -57,7 +57,7 @@
   
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get('/employees');
+      const response = await axios.get('employees');
       employees.value = response.data;
     } catch (error) {
       console.error('Fehler beim Laden der Mitarbeiter:', error);
@@ -66,7 +66,7 @@
   
   const fetchJobs = async () => {
     try {
-      const response = await axios.get('/jobs');
+      const response = await axios.get('jobs');
       jobs.value = response.data;
     } catch (error) {
       console.error('Fehler beim Laden der Aufträge:', error);
