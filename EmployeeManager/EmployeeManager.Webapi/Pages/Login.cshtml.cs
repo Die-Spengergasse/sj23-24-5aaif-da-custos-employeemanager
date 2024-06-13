@@ -28,10 +28,10 @@ namespace EmployeeManager.Webapi.Pages
             .OrderBy(u => u)
             .ToList();
         [BindProperty]
-        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ung�ltiger Username")]
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Username")]
         public string Username { get; set; } = default!;
         [BindProperty]
-        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ung�ltiges Passwort")]
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiges Passwort")]
         public string Password { get; set; } = default!;
         [FromQuery]
         public string? ReturnUrl { get; set; }
@@ -48,12 +48,22 @@ namespace EmployeeManager.Webapi.Pages
                 ModelState.AddModelError("", "Invalid username.");
                 return Page();
             }
+
+            // Check if the user is an administrator
+            var isAdmin = (Username == "admin" && Password == "password"); // Example logic
+
             var claims = new List<Claim>
             {
                 new Claim("Guid", user.Guid.ToString()),
                 new Claim(ClaimTypes.Name, Username),
-                new Claim(ClaimTypes.Role, "admin")
             };
+
+            // If the user is an administrator, add the "admin" role claim
+            if (isAdmin)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "admin"));
+            }
+
             var claimsIdentity = new ClaimsIdentity(
                 claims,
                 Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);

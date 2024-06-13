@@ -1,4 +1,5 @@
 ﻿using EmployeeManager.Application.Infrastructure;
+using EmployeeManager.Application.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -25,6 +26,23 @@ namespace EmployeeManager.Webapi.Controllers
                 yield return new ValidationResult("Ungültiges Geburtsdatum", new string[] { nameof(Birth) });
         }
     };
+
+    public record NewEditEmployeeCmd(
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Username")]
+        string Username,
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Vorname")]
+        string Firstname,
+        [StringLength(255, MinimumLength = 1, ErrorMessage = "Ungültiger Nachname")]
+        string Lastname,
+        DateTime Birth) : IValidatableObject
+    {
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Birth < DateTime.Now.AddYears(-100) || Birth > DateTime.Now.AddYears(-14))
+                yield return new ValidationResult("Ungültiges Geburtsdatum", new string[] { nameof(Birth) });
+        }
+    };
+
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeesController : ControllerBase
@@ -48,6 +66,23 @@ namespace EmployeeManager.Webapi.Controllers
                 .ToListAsync();
             return Ok(employees);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateEmployee([FromBody] NewEditEmployeeCmd createEmployeeCmd)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var newEmployee = new Employee(createEmployeeCmd.Username, createEmployeeCmd.Firstname, createEmployeeCmd.Lastname, createEmployeeCmd.Birth)
+            {
+                Guid = Guid.NewGuid()
+            };
+
+            _db.Employees.Add(newEmployee);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { newEmployee.Guid });
+        }
+
         [HttpPut]
         public async Task<IActionResult> EditEmployee(EditEmployeeCmd editEmployeeCmd)
         {
@@ -57,6 +92,7 @@ namespace EmployeeManager.Webapi.Controllers
             employee.Username = editEmployeeCmd.Username;
             employee.Firstname = editEmployeeCmd.Firstname;
             employee.Lastname = editEmployeeCmd.Lastname;
+            employee.Birth = editEmployeeCmd.Birth;
             try
             {
                 await _db.SaveChangesAsync();
@@ -67,5 +103,20 @@ namespace EmployeeManager.Webapi.Controllers
             }
             return NoContent();
         }
+
+        [HttpDelete("{guid}")]
+        public async Task<IActionResult> DeleteEmployee(Guid guid)
+        {
+            var employee = await _db.Employees.FirstOrDefaultAsync(e => e.Guid == guid);
+            if (employee == null)
+                return NotFound();
+
+            _db.Employees.Remove(employee);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
+
+

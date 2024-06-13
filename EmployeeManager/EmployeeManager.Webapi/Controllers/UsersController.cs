@@ -27,11 +27,16 @@ namespace EmployeeManager.Webapi.Controllers
         {
             var authenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
             if (!authenticated) { return Unauthorized(); }
+
+            var username = HttpContext.User.Identity?.Name;
+            var guid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Guid")?.Value;
+            var isAdmin = HttpContext.User.IsInRole("admin");
+
             return Ok(new
             {
-                Username = HttpContext.User.Identity?.Name,
-                Guid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Guid")?.Value,
-                IsAdmin = HttpContext.User.IsInRole("admin"),
+                Username = username,
+                Guid = guid,
+                IsAdmin = isAdmin,
             });
         }
     }
