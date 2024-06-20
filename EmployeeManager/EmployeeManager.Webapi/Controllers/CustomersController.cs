@@ -1,4 +1,5 @@
 ﻿using EmployeeManager.Application.Infrastructure;
+using EmployeeManager.Application.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 namespace EmployeeManager.Webapi.Controllers
 {
     public record EditCustomerCmd(Guid Guid, string Name, string Zip, string City, string Street);
+    public record NewCustomerCmd(string Name, string Zip, string City, string Street);
+
     [Route("api/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
@@ -28,6 +31,23 @@ namespace EmployeeManager.Webapi.Controllers
                 .ToListAsync();
             return Ok(customers);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCustomer([FromBody] NewCustomerCmd newCustomerCmd)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var newCustomer = new Customer(newCustomerCmd.Name, newCustomerCmd.Zip, newCustomerCmd.City, newCustomerCmd.Street)
+            {
+                Guid = Guid.NewGuid()
+            };
+
+            _db.Customers.Add(newCustomer);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { newCustomer.Guid });
+        }
+
         [HttpPut]
         public async Task<IActionResult> EditCustomer(EditCustomerCmd editCustomerCmd)
         {
@@ -46,6 +66,19 @@ namespace EmployeeManager.Webapi.Controllers
             {
                 return BadRequest(e.InnerException?.Message ?? e.Message);
             }
+            return NoContent();
+        }
+
+        [HttpDelete("{guid}")]
+        public async Task<IActionResult> DeleteCustomer(Guid guid)
+        {
+            var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Guid == guid);
+            if (customer == null)
+                return NotFound();
+
+            _db.Customers.Remove(customer);
+            await _db.SaveChangesAsync();
+
             return NoContent();
         }
     }
